@@ -32,24 +32,19 @@ services:
       timeout: 5s
       retries: 5
 
-# ----------------------------------------------------------
-# Redis Stack — 短期记忆
-# 存储：会话级对话上下文，TTL 自动过期
-# 使用 redis-stack 镜像，内置 RedisJSON / RediSearch 模块
-# langgraph-checkpoint-redis 依赖 JSON.SET 命令，标准 redis 镜像不支持
-# Web UI：http://localhost:8001（RedisInsight）
-# ----------------------------------------------------------
+  # ----------------------------------------------------------
+  # Redis — 短期记忆
+  # 存储：会话级对话上下文，TTL 自动过期
+  # ----------------------------------------------------------
   redis:
-    image: redis/redis-stack:7.4.0-v3
+    image: redis:7
     container_name: tiangong-redis
     restart: always
-    environment:
-      REDIS_ARGS: "--appendonly yes"
+    command: redis-server --appendonly yes
     volumes:
       - ./docker/redis_data:/data
     ports:
-      - "6379:6379"   # Redis 主端口
-      - "8001:8001"   # RedisInsight 可视化 Web UI
+      - "6379:6379"
     networks:
       - tiangong-net
     healthcheck:

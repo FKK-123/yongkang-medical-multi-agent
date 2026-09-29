@@ -35,14 +35,6 @@ class Settings(BaseSettings):
     NEO4J_USER: str = "neo4j"
     NEO4J_PASSWORD: str = "medical123"
 
-    # 模型
-    DASHSCOPE_API_KEY: str = ""
-       # 聊天模型
-    BASE_URL_CHAT: str = ""
-    DEEPSEEK_API_KEY: str = ""
-    CHAT_MODEL: str = "deepseek-chat"
-    EMBEDDING_MODEL: str = "text-embedding-v3"
-    VL_MODEL: str = "qwen-vl"
 
     LOG_LEVEL: str = "DEBUG"
     LOG_DIR: str = "logs"
