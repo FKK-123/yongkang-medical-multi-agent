@@ -1,7 +1,7 @@
 # chenguang-agent-
 
 #### 介绍
-《天宫医疗-智能体》集中于解决医疗领域的 Agent 业务构建。包括：
+《永康医疗-智能体》集中于解决医疗领域的 Agent 业务构建。包括：
 1. 智慧问诊 Agent
 2. 报告解读 Agent
 3. 药物 Agent
@@ -16,9 +16,9 @@
 
 ```sh
 # 创建环境
-conda create -n tiangong python=3.13
+conda create -n yongkang python=3.13
 # 激活环境
-conda activate tiangong
+conda activate yongkang
 
 # 安装依赖
 pip install -r requirements.txt

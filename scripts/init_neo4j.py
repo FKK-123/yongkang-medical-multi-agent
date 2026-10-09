@@ -8,7 +8,7 @@
 #   待补充：DRUG_INTERACTION / SAME_CLASS / PRODUCED_BY
 #           （medical.json 无对应字段，需接入 NMPA 数据后补充）
 # 前置条件：Neo4j 已启动，APOC 插件已加载
-# 用法: cd tiangong-agent && python scripts/init_neo4j.py
+# 用法: cd yongkang-agent && python scripts/init_neo4j.py
 # ============================================================
 
 import json

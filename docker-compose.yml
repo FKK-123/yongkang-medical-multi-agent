@@ -1,5 +1,5 @@
 # ============================================================
-# 天宫医疗智能体 (tiangong-agent) — 基础设施层
+# 永康医疗智能体 (yongkang-agent) — 基础设施层
 # 包含：PostgreSQL / Redis / Milvus / Neo4j
 # 启动：docker compose up -d
 # 停止：docker compose down
@@ -14,7 +14,7 @@ services:
   # ----------------------------------------------------------
   postgres:
     image: postgres:17.9
-    container_name: tiangong-postgres
+    container_name: yongkang-postgres
     restart: always
     environment:
       POSTGRES_USER: medical
@@ -25,28 +25,33 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - tiangong-net
+      - yongkang-net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U medical -d medical_db"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # ----------------------------------------------------------
-  # Redis — 短期记忆
-  # 存储：会话级对话上下文，TTL 自动过期
-  # ----------------------------------------------------------
+# ----------------------------------------------------------
+# Redis Stack — 短期记忆
+# 存储：会话级对话上下文，TTL 自动过期
+# 使用 redis-stack 镜像，内置 RedisJSON / RediSearch 模块
+# langgraph-checkpoint-redis 依赖 JSON.SET 命令，标准 redis 镜像不支持
+# Web UI：http://localhost:8001（RedisInsight）
+# ----------------------------------------------------------
   redis:
-    image: redis:7
-    container_name: tiangong-redis
+    image: docker.xuanyuan.run/redis/redis-stack:7.4.0-v3
+    container_name: yongkang-redis
     restart: always
-    command: redis-server --appendonly yes
+    environment:
+      REDIS_ARGS: "--appendonly yes"
     volumes:
       - ./docker/redis_data:/data
     ports:
-      - "6379:6379"
+      - "6379:6379"   # Redis 主端口
+      - "8001:8001"   # RedisInsight 可视化 Web UI
     networks:
-      - tiangong-net
+      - yongkang-net
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -57,8 +62,8 @@ services:
   # Milvus 依赖：etcd — 元数据存储
   # ----------------------------------------------------------
   etcd:
-    container_name: tiangong-milvus-etcd
-    image: quay.io/coreos/etcd:v3.5.25
+    container_name: yongkang-milvus-etcd
+    image: njxglvc3a0k479zrq6-quay.xuanyuan.run/coreos/etcd:v3.5.25
     environment:
       - ETCD_AUTO_COMPACTION_MODE=revision
       - ETCD_AUTO_COMPACTION_RETENTION=1000
@@ -72,18 +77,18 @@ services:
     volumes:
       - ./docker/etcd_data:/etcd
     networks:
-      - tiangong-net
+      - yongkang-net
 
   # ----------------------------------------------------------
   # Milvus 依赖：MinIO — 对象存储（存向量数据文件）
   # ----------------------------------------------------------
   minio:
-    image: minio/minio:RELEASE.2024-12-18T13-15-44Z
-    container_name: tiangong-minio
+    image: docker.xuanyuan.run/minio/minio:RELEASE.2024-12-18T13-15-44Z
+    container_name: yongkang-minio
     restart: always
     environment:
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
     command: minio server /minio_data --console-address ":9001"
     volumes:
       - ./docker/minio_data:/minio_data
@@ -91,7 +96,7 @@ services:
       - "9000:9000"
       - "9001:9001"
     networks:
-      - tiangong-net
+      - yongkang-net
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -103,8 +108,8 @@ services:
   # 存储：文档 Embedding（RAG 语义检索）、患者历史长期记忆
   # ----------------------------------------------------------
   milvus:
-    container_name: tiangong-milvus
-    image: milvusdb/milvus:v2.6.13
+    container_name: yongkang-milvus
+    image: docker.xuanyuan.run/milvusdb/milvus:v2.6.13
     command: ["milvus", "run", "standalone"]
     security_opt:
     - seccomp:unconfined
@@ -121,7 +126,7 @@ services:
       - etcd
       - minio
     networks:
-      - tiangong-net
+      - yongkang-net
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
       interval: 30s
@@ -129,7 +134,7 @@ services:
       retries: 3
   # Milvus  可视化客户端
   attu:
-    container_name: tiangong-attu
+    container_name: yongkang-attu
     image: zilliz/attu:latest
     environment:
       MILVUS_URL: 172.25.112.1:19530
@@ -144,7 +149,7 @@ services:
   # ----------------------------------------------------------
   neo4j:
     image: neo4j:5.20
-    container_name: tiangong-neo4j
+    container_name: yongkang-neo4j
     restart: always
     environment:
       NEO4J_AUTH: neo4j/medical123
@@ -157,7 +162,7 @@ services:
       - "7474:7474"   # Web UI
       - "7687:7687"   # Bolt 协议（SDK 连接）
     networks:
-      - tiangong-net
+      - yongkang-net
     healthcheck:
       test: ["CMD", "neo4j", "status"]
       interval: 30s
@@ -180,5 +185,5 @@ volumes:
 # 网络
 # ----------------------------------------------------------
 networks:
-  tiangong-net:
+  yongkang-net:
     driver: bridge

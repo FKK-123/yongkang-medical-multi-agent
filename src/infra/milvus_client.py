@@ -4,7 +4,7 @@ from pymilvus import connections, utility
 from src.core.config import get_settings
 
 settings = get_settings()
-MILVUS_ALIAS = "tiangong_milvus"
+MILVUS_ALIAS = "yongkang_milvus"
 
 
 def get_milvus_client_alias() -> str:

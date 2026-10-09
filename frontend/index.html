@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>永康医疗 · Agent Operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">Y</div><div><strong>永康医疗</strong><span>AGENT OPERATIONS</span></div></div>
+      <div class="workspace"><span class="eyebrow">WORKSPACE</span><button class="workspace-btn"><span class="workspace-dot"></span>面试演示环境 <span>⌄</span></button></div>
+      <nav>
+        <div class="nav-label">控制台</div>
+        <button class="nav-item active" data-view="overview"><span class="nav-icon">◈</span>总览<span class="nav-count">01</span></button>
+        <button class="nav-item" data-view="conversation"><span class="nav-icon">◌</span>智能问诊<span class="nav-live">LIVE</span></button>
+        <button class="nav-item" data-view="knowledge"><span class="nav-icon">▦</span>知识库<span class="nav-count">24</span></button>
+        <button class="nav-item" data-view="agents"><span class="nav-icon">⌘</span>Agent 编排</button>
+        <button class="nav-item" data-view="observability"><span class="nav-icon">⌁</span>可观测性</button>
+        <div class="nav-label nav-gap">系统</div>
+        <button class="nav-item" data-view="settings"><span class="nav-icon">⚙</span>运行配置</button>
+        <button class="nav-item"><span class="nav-icon">▤</span>API 文档 <span class="external">↗</span></button>
+      </nav>
+      <div class="sidebar-bottom"><div class="status-line"><span class="pulse"></span><span>系统运行正常</span><code>v1.0.0</code></div><div class="user-chip"><div class="avatar">F</div><div><strong>Fkk</strong><span>管理员</span></div><span class="more">•••</span></div></div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div class="crumbs"><span>控制台</span><b>/</b><strong id="pageTitle">总览</strong></div><div class="top-actions"><span class="sync"><span class="pulse"></span>实时连接</span><button class="icon-btn" title="通知" id="notifyBtn">♧<i>3</i></button><button class="avatar top-avatar">F</button></div></header>
+      <div id="pageContent"></div>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

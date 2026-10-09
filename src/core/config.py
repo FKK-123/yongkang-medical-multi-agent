@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 class Settings(BaseSettings):
-    APP_NAME: str = "tiangong-agent"
+    APP_NAME: str = "yongkang-agent"
     APP_ENV: str = "dev"
     APP_DEBUG: bool = True
 
@@ -12,6 +12,11 @@ class Settings(BaseSettings):
     DB_USER: str = "medical"
     DB_PASSWORD: str = "medical123"
     DB_NAME: str = "medical_db"
+
+    #minerU
+    MINERU_BACKEND: str = ""
+    MINERU_API_URL: str = ""
+    MINERU_TIMEOUT: int = 22
 
     # Redis
     REDIS_HOST: str = "localhost"
@@ -35,6 +40,14 @@ class Settings(BaseSettings):
     NEO4J_USER: str = "neo4j"
     NEO4J_PASSWORD: str = "medical123"
 
+    # 模型
+    DASHSCOPE_API_KEY: str = "sk-ws-H.PRMLIPY.US1S.MEYCIQCUAMmtrrQyRm0Bnp1lHY-jugqbTrQqa-nArUAkI5Ho2gIhALCnPsUk2-Azq1GBbZWweAF4e3f_r-N45jIzyc0Ws1z0"
+       # 聊天模型
+    BASE_URL_CHAT: str = "https://api.deepseek.com"
+    DEEPSEEK_API_KEY: str = "sk-8363b6642218431484308528376517c3"
+    CHAT_MODEL: str = "deepseek-chat"
+    EMBEDDING_MODEL: str = "text-embedding-v3"
+    VL_MODEL: str = "qwen-vl"
 
     LOG_LEVEL: str = "DEBUG"
     LOG_DIR: str = "logs"
@@ -53,3 +66,18 @@ class Settings(BaseSettings):
 @lru_cache  # lru 把对象实例保存到内存中。这是一种单例的实现
 def get_settings() -> Settings:
     return Settings()
+
+def get_llm(temperature: float = 0.3):
+    """Create the configured chat model used by worker agents."""
+    from langchain_openai import ChatOpenAI
+
+    settings = get_settings()
+    # DashScope's compatible endpoint uses the OpenAI API protocol.  Using
+    # ChatDeepSeek here would ignore BASE_URL_CHAT and send qwen-* models to
+    # the DeepSeek endpoint.
+    return ChatOpenAI(
+        model=settings.CHAT_MODEL,
+        api_key=settings.DASHSCOPE_API_KEY,
+        base_url=settings.BASE_URL_CHAT,
+        temperature=temperature,
+    )
